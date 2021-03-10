@@ -82,11 +82,7 @@ for task_id in tasks:
 	  record['requeriment_keywords'] = ','.join(list(set(record['requeriment_keywords'].split(','))))
 	all_records.append(record)
 df_records = pd.DataFrame(all_records)
-df_records.head()
-df_records.to_csv('current_tasks.csv')
 
-
-df_records = pd.read_csv('current_tasks.csv')
 block_ids = []
 records = df_records[(df_records['time_ini']<time_end) & (df_records['time_end']>time_ini)]
 records = records.sort_values('amount_in_dollars', ascending=False)

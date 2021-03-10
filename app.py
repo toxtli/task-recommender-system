@@ -91,4 +91,6 @@ for i, record in records.iterrows():
 	if (cur_time_ini + record['time_block']) <= time_end and (cur_time_ini + record['time_block']) <= record['time_end']:
 	  block_ids.append(record['id'])
 	  cur_time_ini += record['time_block']
-	print(block_ids)
+
+json.dump(block_ids, open('results.json', 'w'))
+print('DONE')

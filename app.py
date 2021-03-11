@@ -4,8 +4,7 @@ import time
 import datetime
 import pandas as pd
 from datetime import datetime
-from flask import Flask, flash, request, redirect, url_for
-from werkzeug.utils import secure_filename
+from flask import Flask, request
 app = Flask(__name__)
 
 @app.route('/')
@@ -23,7 +22,10 @@ def upload():
 	if request.method == 'POST':
 		data_file = 'mturk.json'
 		if 'file' not in request.files:
-			tasks = json.load(request.files['file'].read())
+			try:
+				tasks = json.load(request.files['file'].read())
+			except:
+				return '[]'
 		else:
 			tasks = json.load(open(data_file, 'r'))
 

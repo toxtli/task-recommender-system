@@ -1,3 +1,4 @@
+import sys
 import json
 import pytz
 import time
@@ -12,6 +13,7 @@ def index():
 	return '''
 	<form action="/upload" method="post" enctype="multipart/form-data">
 	  Select data file:
+	  <input type="text" name="user" value="1">
 	  <input type="file" name="file">
 	  <input type="submit" value="Upload">
 	</form>
@@ -21,12 +23,15 @@ def index():
 def upload():
 	if request.method == 'POST':
 		data_file = 'mturk.json'
-		if 'file' not in request.files:
+		if 'file' in request.files:
 			try:
-				tasks = json.load(request.files['file'].read())
+				print('FILE LOADED')
+				tasks = json.load(request.files['file'])
 			except:
+				print(sys.exc_info())
 				return '[]'
 		else:
+			print('DEFAULT FILE')
 			tasks = json.load(open(data_file, 'r'))
 
 		cur_time = time.time() * 1000
@@ -90,6 +95,8 @@ def upload():
 			all_records.append(record)
 		df_records = pd.DataFrame(all_records)
 
+		df_records = df_records[df_records['caller_meets_requirements']==True]
+		#df_records = df_records[df_records['caller_meets_preview_requirements']==True]
 		records = df_records[(df_records['time_ini']<time_end) & (df_records['time_end']>time_ini)]
 		records = records.sort_values('amount_in_dollars', ascending=False)
 		cur_time_ini = time_ini
@@ -97,7 +104,13 @@ def upload():
 			if (cur_time_ini + record['time_block']) <= time_end and (cur_time_ini + record['time_block']) <= record['time_end']:
 			  block_ids.append(record['id'])
 			  cur_time_ini += record['time_block']
-
-		return json.dumps(block_ids)
+		urls = []
+		for i,block_id in enumerate(block_ids):
+			url = '<a target="_blank" href=https://worker.mturk.com/projects/' + block_id + '/tasks?ref=w_pl_prvw>' + str(i) + '</a>'
+			urls.append(url)
+		return json.dumps(urls)
 	else:
 		return index()
+
+if __name__ == '__main__':
+        app.run(host='0.0.0.0')

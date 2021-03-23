@@ -106,7 +106,8 @@ def upload():
 			  cur_time_ini += record['time_block']
 		urls = []
 		for i,block_id in enumerate(block_ids):
-			url = '<a target="_blank" href=https://worker.mturk.com/projects/' + block_id + '/tasks?ref=w_pl_prvw>' + str(i) + '</a>'
+			# url = '<a target="_blank" href=https://worker.mturk.com/projects/' + block_id + '/tasks?ref=w_pl_prvw>' + str(i) + '</a>'
+			url = block_id
 			urls.append(url)
 		return json.dumps(urls)
 	else:
